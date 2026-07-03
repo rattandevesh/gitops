@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stage-cluster
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+type: Opaque
+stringData:
+  name: stage.cluster.example.internal
+  server: https://api.stage.cluster.example.internal
+  config: |
+    {
+      "awsAuthConfig": {
+        "clusterName": "stage.cluster.example.internal"
+      },
+      "tlsClientConfig": {
+        "insecure": false
+      }
+    }

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  policy.csv: |
+    g, team-dev, role:dev-admin
+    g, team-ops, role:ops-admin
+    p, role:dev-admin, applications, sync, dev/*, allow
+    p, role:dev-admin, applications, get, dev/*, allow
+    p, role:ops-admin, applications, sync, stage/*, allow
+    p, role:ops-admin, applications, sync, prod/*, allow
+    p, role:ops-admin, applications, get, *, allow
+    p, role:ops-admin, applications, create, *, allow
+    p, role:ops-admin, applications, update, *, allow
+    p, role:ops-admin, applications, delete, *, allow

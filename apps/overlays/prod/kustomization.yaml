@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: argocd
+
+resources:
+  - ../../platform/platform-application.yaml
+  - ../../retail-store/ui-application.yaml
+  - ../../retail-store/catalog-application.yaml
+  - ../../retail-store/cart-application.yaml
+  - ../../retail-store/orders-application.yaml
+  - ../../retail-store/checkout-application.yaml
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/source/helm/valueFiles/0
+        value: values-prod.yaml
+    target:
+      kind: Application
+  - patch: |-
+      - op: replace
+        path: /spec/syncPolicy/automated
+        value: {}
+    target:
+      kind: Application

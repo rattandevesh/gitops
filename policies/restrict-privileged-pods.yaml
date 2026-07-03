@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-privileged-pods
+  annotations:
+    policies.kyverno.io/title: Restrict Privileged Pods
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod, Container
+    policies.kyverno.io/description: >-
+      Privileged pods can access host resources and should be restricted.
+      This policy prevents containers from running in privileged mode.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: check-privileged
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Containers must not run in privileged mode."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  privileged: false
+    - name: check-privileged-init
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Init containers must not run in privileged mode."
+        pattern:
+          spec:
+            initContainers:
+              - securityContext:
+                  privileged: false

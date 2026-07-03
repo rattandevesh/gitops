@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-liveness-probe
+  annotations:
+    policies.kyverno.io/title: Require Liveness Probe
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod, Container
+    policies.kyverno.io/description: >-
+      Liveness probes allow Kubernetes to detect and restart unhealthy containers.
+      This policy requires liveness probes for all containers.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: check-liveness-probe
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Containers must have a liveness probe defined."
+        pattern:
+          spec:
+            containers:
+              - livenessProbe:
+                  (httpGet | tcpSocket | exec): "?*"

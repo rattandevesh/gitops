@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-host-path
+  annotations:
+    policies.kyverno.io/title: Restrict Host Path Volumes
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod, Volume
+    policies.kyverno.io/description: >-
+      Host path volumes can expose sensitive host filesystem data.
+      This policy restricts the use of hostPath volumes.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: restrict-host-path
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Host path volumes are not allowed."
+        pattern:
+          spec:
+            volumes:
+              - (hostPath): null

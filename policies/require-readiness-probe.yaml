@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-readiness-probe
+  annotations:
+    policies.kyverno.io/title: Require Readiness Probe
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod, Container
+    policies.kyverno.io/description: >-
+      Readiness probes ensure that traffic is only sent to pods that are
+      ready to handle it. This policy requires readiness probes for all containers.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: check-readiness-probe
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Containers must have a readiness probe defined."
+        pattern:
+          spec:
+            containers:
+              - readinessProbe:
+                  (httpGet | tcpSocket | exec): "?*"
