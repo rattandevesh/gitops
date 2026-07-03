@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/apps.git
+    repoURL: https://github.com/rattandevesh/apps.git
     targetRevision: HEAD
     path: cart
     helm:

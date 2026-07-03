@@ -1,0 +1,56 @@
+name: ArgoCD Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/**'
+      - 'clusters/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (dev, stage, prod)'
+        required: true
+        default: 'dev'
+      application:
+        description: 'Application name'
+        required: true
+        default: 'dev-root'
+
+jobs:
+  argocd-sync:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/download/v2.8.0/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/
+
+      - name: Configure ArgoCD
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} \
+            --username ${{ secrets.ARGOCD_USERNAME }} \
+            --password ${{ secrets.ARGOCD_PASSWORD }} \
+            --insecure
+
+      - name: Sync Application
+        run: |
+          if [ "${{ inputs.application }}" != "" ]; then
+            argocd app sync ${{ inputs.application }}
+          else
+            argocd app sync dev-root
+          fi
+
+      - name: Wait for Sync
+        run: |
+          if [ "${{ inputs.application }}" != "" ]; then
+            argocd app wait ${{ inputs.application }} --health
+          else
+            argocd app wait dev-root --health
+          fi

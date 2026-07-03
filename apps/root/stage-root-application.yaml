@@ -8,17 +8,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/gitops.git
+    repoURL: https://github.com/rattandevesh/gitops.git
     targetRevision: HEAD
     path: apps/overlays/stage
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: false
     syncOptions:
       - CreateNamespace=true
     retry:

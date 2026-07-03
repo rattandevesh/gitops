@@ -1,0 +1,42 @@
+name: Apply Admission Policies
+
+on:
+  push:
+    branches: [main]
+    paths: ['policies/**']
+  workflow_dispatch:
+    inputs:
+      cluster_name:
+        description: 'kOps cluster name'
+        required: true
+        default: 'dev.cluster.example.internal'
+
+jobs:
+  apply-policies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION || 'us-west-2' }}
+
+      - name: Install kOps and kubectl
+        run: |
+          curl -Lo kops https://github.com/kubernetes/kops/releases/download/v1.28.0/kops-linux-amd64
+          chmod +x kops && sudo mv kops /usr/local/bin/
+          curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+          echo "KOPS_STATE_STORE=s3://${{ inputs.cluster_name || 'dev.cluster.example.internal' }}-state" >> $GITHUB_ENV
+
+      - name: Configure kubeconfig (kOps)
+        run: |
+          kops export kubecfg --name=${{ inputs.cluster_name || 'dev.cluster.example.internal' }} --admin
+
+      - name: Install Kyverno
+        run: kubectl apply -f https://github.com/kyverno/kyverno/releases/download/v1.11.0/install.yaml
+
+      - name: Apply policies
+        run: kubectl apply -f policies/

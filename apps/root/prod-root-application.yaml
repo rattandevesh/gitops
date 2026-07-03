@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/gitops.git
+    repoURL: https://github.com/rattandevesh/gitops.git
     targetRevision: HEAD
     path: apps/overlays/prod
   destination:

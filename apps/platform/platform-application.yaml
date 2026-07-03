@@ -3,10 +3,12 @@ kind: Application
 metadata:
   name: platform
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/apps.git
+    repoURL: https://github.com/rattandevesh/apps.git
     targetRevision: HEAD
     path: platform
     helm:
