@@ -4,13 +4,13 @@ kind: Kustomization
 namespace: argocd
 
 resources:
-  - ../../platform/platform-application.yaml
-  - ../../retail-store/ui-application.yaml
-  - ../../retail-store/catalog-application.yaml
-  - ../../retail-store/cart-application.yaml
-  - ../../retail-store/orders-application.yaml
-  - ../../retail-store/checkout-application.yaml
-  - ../../monitoring/monitoring-application.yaml
+  - platform-application.yaml
+  - ui-application.yaml
+  - catalog-application.yaml
+  - cart-application.yaml
+  - orders-application.yaml
+  - checkout-application.yaml
+  - monitoring-application.yaml
 
 patches:
   - patch: |-
