@@ -1,12 +1,13 @@
 name: ArgoCD Sync
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/**'
-      - 'clusters/**'
+  # Disabled automatic push trigger - uncomment after configuring secrets
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'apps/**'
+  #     - 'clusters/**'
   workflow_dispatch:
     inputs:
       environment:
